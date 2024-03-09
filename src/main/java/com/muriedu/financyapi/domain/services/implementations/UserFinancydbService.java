@@ -1,0 +1,79 @@
+package com.muriedu.financyapi.domain.services.implementations;
+
+import com.muriedu.financyapi.DTOs.JWTAuthRequestDTO;
+import com.muriedu.financyapi.DTOs.JWTAuthResponseDTO;
+import com.muriedu.financyapi.DTOs.UserRequestDTO;
+import com.muriedu.financyapi.domain.entities.UserEntity;
+import com.muriedu.financyapi.domain.repositories.UsersRepository;
+import com.muriedu.financyapi.domain.services.UserService;
+import com.muriedu.financyapi.exceptions.DataNotFoundedException;
+import com.muriedu.financyapi.exceptions.InvalidCredentialException;
+import com.muriedu.financyapi.exceptions.UserCreationException;
+import com.muriedu.financyapi.security.jwt.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserFinancydbService implements UserService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UsersRepository usersRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+
+    @Override
+    public UserEntity create(UserRequestDTO newUser) {
+        UserEntity userToCreate = UserEntity.builder()
+                .name(newUser.getName())
+                .login(newUser.getLogin())
+                .password(passwordEncoder.encode(newUser.getPassword()))
+                .build();
+
+        try {
+            return usersRepository.save(userToCreate);
+        } catch (DataIntegrityViolationException ex){
+            throw new UserCreationException("This login already exists");
+        }
+    }
+
+    @Override
+    public JWTAuthResponseDTO auth(JWTAuthRequestDTO credentials) {
+        UserEntity user = loadByLogin(credentials.getLogin());
+        boolean isVerified = passwordEncoder.matches(credentials.getPassword(), user.getPassword());
+        if (isVerified) {
+            String token = jwtService.generateToken(user);
+            return JWTAuthResponseDTO.builder()
+                    .token(token)
+                    .login(user.getLogin())
+                    .name(user.getName())
+                    .build();
+        }
+        throw new InvalidCredentialException("Incorrect password");
+    }
+
+    @Override
+    public UserEntity loadByLogin(String login) {
+
+        return usersRepository.findByLogin(login)
+                .orElseThrow(() -> new DataNotFoundedException("User not founded"));
+
+    }
+
+    @Override
+    public void delete(String login) {
+
+        UserEntity user = loadByLogin(login);
+
+
+        usersRepository.delete(user);
+    }
+
+
+}
