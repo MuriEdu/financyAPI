@@ -1,5 +1,6 @@
 package com.muriedu.financyapi.domain.services.implementations;
 
+import com.muriedu.financyapi.DTOs.SeasonResponseDTO;
 import com.muriedu.financyapi.domain.entities.SeasonEntity;
 import com.muriedu.financyapi.domain.entities.UserEntity;
 import com.muriedu.financyapi.domain.repositories.SeasonsRepository;
@@ -9,8 +10,11 @@ import jakarta.validation.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -39,6 +43,24 @@ public class SeasonDefaultService implements SeasonService {
 
     @Override
     public boolean isActive(SeasonEntity season) {
-        return false;
+        Integer seasonMonth = season.getMonth();
+        Integer seasonYear = season.getYear();
+
+        LocalDateTime now = LocalDateTime.now();
+        Integer crrMonth = now.getMonthValue();
+        Integer crrYear = now.getYear();
+        return (Objects.equals(seasonMonth, crrMonth) && Objects.equals(seasonYear, crrYear));
     }
+
+    @Override
+    public List<SeasonEntity> getAllSeasons(UserEntity user) {
+        return seasonsRepository.findAllByUser(user);
+    }
+
+    @Override
+    public SeasonEntity getSeasonByDate(UserEntity user, SeasonResponseDTO season) {
+        return seasonsRepository.findAllByUserAndMonthAndYear(user, season.getMonth(), season.getYear()).get(0);
+    }
+
+
 }

@@ -53,6 +53,7 @@ public class UserFinancydbService implements UserService {
         boolean isVerified = passwordEncoder.matches(credentials.getPassword(), user.getPassword());
         if (isVerified) {
             String token = jwtService.generateToken(user);
+            seasonService.create(user);
             return JWTAuthResponseDTO.builder()
                     .token(token)
                     .login(user.getLogin())

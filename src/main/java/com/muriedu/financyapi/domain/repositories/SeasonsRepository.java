@@ -10,4 +10,5 @@ import java.util.UUID;
 
 public interface SeasonsRepository extends JpaRepository<SeasonEntity, UUID> {
     public List<SeasonEntity> findAllByUserAndMonthAndYear(UserEntity user, Integer month, Integer year);
+    public List<SeasonEntity> findAllByUser(UserEntity user);
 }
