@@ -12,20 +12,24 @@ import com.muriedu.financyapi.exceptions.UserCreationException;
 import com.muriedu.financyapi.security.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserFinancydbService implements UserService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     @Autowired
     private UsersRepository usersRepository;
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private SeasonDefaultService seasonService;
 
 
     @Override

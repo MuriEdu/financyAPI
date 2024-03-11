@@ -1,34 +1,36 @@
 package com.muriedu.financyapi.domain.entities;
 
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity(name = "users_tb")
+@Entity(name = "seasons_tb")
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+@NoArgsConstructor
+public class SeasonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
-    private String login;
+    private Integer month;
 
     @Column(nullable = false)
-    private String password;
+    private Integer year;
 
+    @ManyToOne
+    private UserEntity user;
 
 }
+
+

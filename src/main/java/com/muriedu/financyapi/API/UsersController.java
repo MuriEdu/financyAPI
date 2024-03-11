@@ -5,6 +5,7 @@ import com.muriedu.financyapi.DTOs.JWTAuthResponseDTO;
 import com.muriedu.financyapi.DTOs.UserRequestDTO;
 import com.muriedu.financyapi.DTOs.UserDTO;
 import com.muriedu.financyapi.domain.entities.UserEntity;
+import com.muriedu.financyapi.domain.services.implementations.SeasonDefaultService;
 import com.muriedu.financyapi.domain.services.implementations.UserFinancydbService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class UsersController {
 
     private final UserFinancydbService userService;
+    private final SeasonDefaultService seasonService;
 
     @PostMapping
     @ResponseStatus(CREATED)
     public UserDTO create(@RequestBody @Valid UserRequestDTO newUser){
         UserEntity createdUser = userService.create(newUser);
+        seasonService.create(createdUser);
         return UserDTO.builder()
                 .name(createdUser.getName())
                 .login(createdUser.getLogin())
@@ -39,5 +42,6 @@ public class UsersController {
     public void delete(@RequestBody UserDTO user){
         userService.delete(user.getLogin());
     }
+
 
 }

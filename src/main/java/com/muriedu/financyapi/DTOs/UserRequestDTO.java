@@ -13,4 +13,5 @@ public class UserRequestDTO {
 
     @NotEmpty(message = "Password field is required")
     String password;
+
 }
