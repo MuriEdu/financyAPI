@@ -73,10 +73,8 @@ public class UserFinancydbService implements UserService {
 
     @Override
     public void delete(String login) {
-
         UserEntity user = loadByLogin(login);
-
-
+        seasonService.deleteAllUserSeasons(user);
         usersRepository.delete(user);
     }
 

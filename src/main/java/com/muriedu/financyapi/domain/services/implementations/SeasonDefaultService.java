@@ -62,5 +62,11 @@ public class SeasonDefaultService implements SeasonService {
         return seasonsRepository.findAllByUserAndMonthAndYear(user, season.getMonth(), season.getYear()).get(0);
     }
 
+    @Override
+    public void deleteAllUserSeasons(UserEntity user) {
+        List<SeasonEntity> seasons = getAllSeasons(user);
+        seasonsRepository.deleteAll(seasons);
+    }
+
 
 }

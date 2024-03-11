@@ -18,4 +18,6 @@ public interface SeasonService {
 
     public SeasonEntity getSeasonByDate(UserEntity user, SeasonResponseDTO season);
 
+    public void deleteAllUserSeasons(UserEntity user);
+
 }
