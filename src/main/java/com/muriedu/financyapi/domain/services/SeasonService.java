@@ -1,8 +1,9 @@
 package com.muriedu.financyapi.domain.services;
 
-import com.muriedu.financyapi.DTOs.SeasonResponseDTO;
+import com.muriedu.financyapi.DTOs.SeasonDTO;
 import com.muriedu.financyapi.domain.entities.SeasonEntity;
 import com.muriedu.financyapi.domain.entities.UserEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +17,10 @@ public interface SeasonService {
 
     public List<SeasonEntity> getAllSeasons(UserEntity user);
 
-    public SeasonEntity getSeasonByDate(UserEntity user, SeasonResponseDTO season);
+    public SeasonEntity getSeasonByDate(UserEntity user, SeasonDTO season);
 
     public void deleteAllUserSeasons(UserEntity user);
+
+
 
 }

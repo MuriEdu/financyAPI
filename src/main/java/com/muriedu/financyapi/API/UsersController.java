@@ -7,10 +7,16 @@ import com.muriedu.financyapi.DTOs.UserDTO;
 import com.muriedu.financyapi.domain.entities.UserEntity;
 import com.muriedu.financyapi.domain.services.implementations.SeasonDefaultService;
 import com.muriedu.financyapi.domain.services.implementations.UserFinancydbService;
+import com.muriedu.financyapi.security.jwt.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import static org.springframework.http.HttpStatus.*;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/financyapi/users")
@@ -19,6 +25,7 @@ public class UsersController {
 
     private final UserFinancydbService userService;
     private final SeasonDefaultService seasonService;
+    private final JwtService jwtService;
 
     @PostMapping
     @ResponseStatus(CREATED)
@@ -39,9 +46,19 @@ public class UsersController {
 
     @DeleteMapping
     @ResponseStatus(NO_CONTENT)
-    public void delete(@RequestBody UserDTO user){
-        userService.delete(user.getLogin());
+    public void delete(@RequestHeader HttpHeaders headers){
+        String login = jwtService.getUserLogin(userService.recoverToken(headers));
+        userService.delete(login);
     }
+
+    @PatchMapping
+    @ResponseStatus(NO_CONTENT)
+    public void update(@RequestBody UserDTO user, @RequestHeader HttpHeaders headers){
+        String login = jwtService.getUserLogin(userService.recoverToken(headers));
+        userService.update(user, login);
+    }
+
+
 
 
 }

@@ -5,12 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SeasonResponseDTO {
-
+public class SeasonDTO {
 
     private Integer month;
     private Integer year;
-    private String id;
-
 
 }
