@@ -4,8 +4,10 @@ import com.muriedu.financyapi.DTOs.SeasonDTO;
 import com.muriedu.financyapi.domain.entities.SeasonEntity;
 import com.muriedu.financyapi.domain.entities.UserEntity;
 import com.muriedu.financyapi.domain.repositories.SeasonsRepository;
+import com.muriedu.financyapi.domain.services.CashService;
 import com.muriedu.financyapi.domain.services.SeasonService;
 import com.muriedu.financyapi.exceptions.DataNotFoundedException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class SeasonDefaultService implements SeasonService {
 
-    @Autowired
-    private SeasonsRepository seasonsRepository;
+
+    private final SeasonsRepository seasonsRepository;
+    private final CashService cashService;
 
     @Override
     public String create(UserEntity user) {
@@ -31,7 +35,10 @@ public class SeasonDefaultService implements SeasonService {
                     .year(now.getYear())
                     .user(user)
                     .build();
-            return seasonsRepository.save(newSeason).getId().toString();
+
+            SeasonEntity savedSeason = seasonsRepository.save(newSeason);
+            cashService.create(savedSeason);
+            return savedSeason.getId().toString();
         } else {
             return null;
         }

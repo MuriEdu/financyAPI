@@ -2,11 +2,19 @@ package com.muriedu.financyapi.domain.entities;
 
 import com.muriedu.financyapi.domain.enums.AllocationTypes;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity(name = "allocations_tb")
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AllocationEntity {
 
     @Id
