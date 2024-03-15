@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -24,17 +26,17 @@ public class AllocationDefaultService implements AllocationService {
         String name = type.equals(AllocationTypes.EARNS) ? "EARNS" : "SPENDS";
         return allocationRepository.save(
                 AllocationEntity.builder()
-                .name(name)
-                .cashId(cash)
-                .crrCash(BigDecimal.ZERO)
-                .total(BigDecimal.ZERO)
-                .type(type)
-                .build());
+                        .name(name)
+                        .cashId(cash)
+                        .crrCash(BigDecimal.ZERO)
+                        .total(BigDecimal.ZERO)
+                        .type(type)
+                        .build());
     }
 
     @Override
     public AllocationEntity create(CashEntity cash, String name) {
-        boolean uniqueName = allocationRepository.findByNameAndCashId(name, cash).isEmpty();
+        boolean uniqueName = allocationRepository.findAllByNameContainsAndCashId(name, cash).isEmpty();
         if (uniqueName)
             return allocationRepository.save(
                     AllocationEntity.builder()
@@ -44,7 +46,7 @@ public class AllocationDefaultService implements AllocationService {
                             .total(BigDecimal.ZERO)
                             .type(AllocationTypes.USER)
                             .build());
-        else throw new AllocationCreationException("You already have an allocation with this name");
+        else throw new AllocationCreationException("You already have an allocation with this name at season");
     }
 
     @Override
@@ -53,9 +55,37 @@ public class AllocationDefaultService implements AllocationService {
     }
 
     @Override
-    public AllocationEntity getByName(CashEntity cash, String name) {
+    public List<AllocationEntity> getByName(CashEntity cash, String name) {
+        return allocationRepository.findAllByNameContainsAndCashId(name.toUpperCase(), cash);
+    }
 
-        return allocationRepository.findByNameAndCashId(name.toUpperCase(), cash).orElseThrow(
-                () -> new DataNotFoundedException("Allocation not founded"));
+    @Override
+    public List<AllocationEntity> getByType(CashEntity cash, AllocationTypes type) {
+        return allocationRepository.findAllByTypeAndCashId(type, cash);
+    }
+
+    @Override
+    public AllocationEntity getById(UUID id) {
+        return allocationRepository.findById(id).orElseThrow(
+                () -> new DataNotFoundedException("Allocation not founded")
+        );
+    }
+
+    @Override
+    public void update(AllocationEntity allocation) {
+        getById(allocation.getId());
+        allocationRepository.save(allocation);
+    }
+
+    @Override
+    public void deleteAllByCash(CashEntity cash) {
+        List<AllocationEntity> allocationEntities = allocationRepository.findAllByCashId(cash);
+        allocationRepository.deleteAll(allocationEntities);
+    }
+
+    @Override
+    public void deleteById(UUID allocation) {
+        Optional<AllocationEntity> allocationEntity = allocationRepository.findById(allocation);
+        allocationEntity.ifPresent(allocationRepository::delete);
     }
 }

@@ -13,8 +13,6 @@ public interface SeasonService {
 
     public String create(UserEntity user);
 
-    public boolean isActive(SeasonEntity season);
-
     public List<SeasonEntity> getAllSeasons(UserEntity user);
 
     public SeasonEntity getSeasonByDate(UserEntity user, SeasonDTO season);

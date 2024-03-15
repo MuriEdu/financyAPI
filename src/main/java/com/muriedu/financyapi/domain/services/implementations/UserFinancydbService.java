@@ -11,6 +11,7 @@ import com.muriedu.financyapi.exceptions.DataNotFoundedException;
 import com.muriedu.financyapi.exceptions.InvalidCredentialException;
 import com.muriedu.financyapi.exceptions.UserCreationException;
 import com.muriedu.financyapi.security.jwt.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -19,19 +20,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserFinancydbService implements UserService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    @Autowired
-    private UsersRepository usersRepository;
 
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private SeasonDefaultService seasonService;
+    private final UsersRepository usersRepository;
+    private final JwtService jwtService;
+    private final SeasonDefaultService seasonService;
 
 
     @Override

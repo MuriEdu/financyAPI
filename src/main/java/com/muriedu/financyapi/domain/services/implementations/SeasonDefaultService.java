@@ -45,17 +45,6 @@ public class SeasonDefaultService implements SeasonService {
     }
 
     @Override
-    public boolean isActive(SeasonEntity season) {
-        Integer seasonMonth = season.getMonth();
-        Integer seasonYear = season.getYear();
-
-        LocalDateTime now = LocalDateTime.now();
-        Integer crrMonth = now.getMonthValue();
-        Integer crrYear = now.getYear();
-        return (Objects.equals(seasonMonth, crrMonth) && Objects.equals(seasonYear, crrYear));
-    }
-
-    @Override
     public List<SeasonEntity> getAllSeasons(UserEntity user) {
         return seasonsRepository.findAllByUser(user);
     }
@@ -69,6 +58,7 @@ public class SeasonDefaultService implements SeasonService {
     @Override
     public void deleteAllUserSeasons(UserEntity user) {
         List<SeasonEntity> seasons = getAllSeasons(user);
+        seasons.forEach(cashService::delete);
         seasonsRepository.deleteAll(seasons);
     }
 
