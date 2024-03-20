@@ -29,19 +29,12 @@ public class UserFinancydbService implements UserService {
 
     private final UsersRepository usersRepository;
     private final JwtService jwtService;
-    private final SeasonDefaultService seasonService;
 
 
     @Override
-    public UserEntity create(UserRequestDTO newUser) {
-        UserEntity userToCreate = UserEntity.builder()
-                .name(newUser.getName())
-                .login(newUser.getLogin())
-                .password(passwordEncoder.encode(newUser.getPassword()))
-                .build();
-
+    public UserEntity create(UserEntity newUser) {
         try {
-            return usersRepository.save(userToCreate);
+            return usersRepository.save(newUser);
         } catch (DataIntegrityViolationException ex){
             throw new UserCreationException("This login already exists");
         }
@@ -53,7 +46,6 @@ public class UserFinancydbService implements UserService {
         boolean isVerified = passwordEncoder.matches(credentials.getPassword(), user.getPassword());
         if (isVerified) {
             String token = jwtService.generateToken(user);
-            seasonService.create(user);
             return JWTAuthResponseDTO.builder()
                     .token(token)
                     .login(user.getLogin())
@@ -74,7 +66,6 @@ public class UserFinancydbService implements UserService {
     @Override
     public void delete(String login) {
         UserEntity user = loadByLogin(login);
-        seasonService.deleteAllUserSeasons(user);
         usersRepository.delete(user);
     }
 

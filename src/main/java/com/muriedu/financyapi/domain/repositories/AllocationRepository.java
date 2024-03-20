@@ -14,5 +14,6 @@ public interface AllocationRepository extends JpaRepository<AllocationEntity, UU
     public List<AllocationEntity> findAllByNameContainsAndCashId(String name, CashEntity cash);
 
     public List<AllocationEntity> findAllByTypeAndCashId(AllocationTypes type, CashEntity cash);
+    public Optional<AllocationEntity> findByIdAndCashId(UUID id, CashEntity cash);
 
 }

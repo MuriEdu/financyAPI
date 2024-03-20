@@ -5,6 +5,7 @@ import com.muriedu.financyapi.domain.entities.CashEntity;
 import com.muriedu.financyapi.domain.entities.SeasonEntity;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 public interface CashService {
@@ -15,5 +16,9 @@ public interface CashService {
     public CashEntity getBySeason(SeasonEntity season);
 
     public void delete(SeasonEntity season);
+
+    public void deleteAll(List<CashEntity> cashesToDelete);
+
+    public BigDecimal calcCash(SeasonEntity season);
 
 }

@@ -24,6 +24,9 @@ public class CashEntity {
     private BigDecimal cash = BigDecimal.ZERO;
 
     @Column(nullable = false)
+    private BigDecimal nonAllocated = BigDecimal.ZERO;
+
+    @Column(nullable = false)
     private BigDecimal total = BigDecimal.ZERO;
 
     @OneToOne

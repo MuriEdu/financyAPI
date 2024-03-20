@@ -11,13 +11,13 @@ import java.util.List;
 @Service
 public interface SeasonService {
 
-    public String create(UserEntity user);
+    public SeasonEntity create(UserEntity user);
 
     public List<SeasonEntity> getAllSeasons(UserEntity user);
 
     public SeasonEntity getSeasonByDate(UserEntity user, SeasonDTO season);
 
-    public void deleteAllUserSeasons(UserEntity user);
+    public void deleteAll(List<SeasonEntity> seasonsToDelete);
 
 
 

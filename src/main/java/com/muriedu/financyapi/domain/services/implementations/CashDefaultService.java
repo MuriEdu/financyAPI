@@ -24,7 +24,6 @@ import java.util.UUID;
 public class CashDefaultService implements CashService {
 
     private final CashRepository cashRepository;
-    private final AllocationDefaultService allocationService;
 
     @Override
     public CashEntity create(SeasonEntity season) {
@@ -33,12 +32,10 @@ public class CashDefaultService implements CashService {
             CashEntity cashToCreate = CashEntity.builder()
                     .season(season)
                     .cash(BigDecimal.ZERO)
+                    .nonAllocated(BigDecimal.ZERO)
                     .total(BigDecimal.ZERO)
                     .build();
-            CashEntity savedCash = cashRepository.save(cashToCreate);
-            allocationService.create(savedCash, AllocationTypes.EARNS);
-            allocationService.create(savedCash, AllocationTypes.SPENDS);
-            return savedCash;
+            return cashRepository.save(cashToCreate);
         } else throw new CashCreationException("This season already has a cash");
 
 
@@ -47,7 +44,7 @@ public class CashDefaultService implements CashService {
     @Override
     public CashEntity set(BigDecimal initial, SeasonEntity season) {
         CashEntity cash = getBySeason(season);
-        cash.setCash(initial);
+        cash.setNonAllocated(initial);
         return cashRepository.save(cash);
     }
 
@@ -66,6 +63,23 @@ public class CashDefaultService implements CashService {
             allocationService.deleteAllByCash(foundCash);
             cashRepository.delete(foundCash);
         });
+    }
+
+    @Override
+    public void deleteAll(List<CashEntity> cashesToDelete) {
+        cashRepository.deleteAll(cashesToDelete);
+    }
+
+    @Override
+    public BigDecimal calcCash(SeasonEntity season) {
+        CashEntity cash = getBySeason(season);
+        List<AllocationEntity> allocations = allocationService.getAllByCash(cash);
+        allocations.forEach(allocation -> {
+            cash.setCash(cash.getCash().add(allocation.getCrrCash()));
+        });
+        cash.setCash(cash.getCash().add(cash.getNonAllocated()));
+        cashRepository.save(cash);
+        return cash.getCash();
     }
 
 

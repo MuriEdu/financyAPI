@@ -14,8 +14,8 @@ public interface AllocationService {
     public List<AllocationEntity> getAllByCash(CashEntity cash);
     public List<AllocationEntity> getByName(CashEntity cash, String name);
     public List<AllocationEntity> getByType(CashEntity cash, AllocationTypes type);
-    public AllocationEntity getById(UUID id);
+    public AllocationEntity getById(UUID id, CashEntity cash);
     public void update(AllocationEntity allocation);
-    public void deleteAllByCash(CashEntity cash);
-    public void deleteById(UUID allocation);
+    public void deleteAll(List<AllocationEntity> allocationsToDelete);
+    public void deleteById(UUID allocation, CashEntity cash);
 }

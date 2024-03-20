@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 public interface UserService {
-    public UserEntity create(UserRequestDTO newUser);
+    public UserEntity create(UserEntity newUser);
 
     public JWTAuthResponseDTO auth(JWTAuthRequestDTO credentials);
 

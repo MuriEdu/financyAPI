@@ -7,6 +7,7 @@ import com.muriedu.financyapi.domain.repositories.SeasonsRepository;
 import com.muriedu.financyapi.domain.services.CashService;
 import com.muriedu.financyapi.domain.services.SeasonService;
 import com.muriedu.financyapi.exceptions.DataNotFoundedException;
+import com.muriedu.financyapi.exceptions.SeasonCreationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,9 @@ public class SeasonDefaultService implements SeasonService {
 
 
     private final SeasonsRepository seasonsRepository;
-    private final CashService cashService;
 
     @Override
-    public String create(UserEntity user) {
+    public SeasonEntity create(UserEntity user) {
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -36,11 +36,9 @@ public class SeasonDefaultService implements SeasonService {
                     .user(user)
                     .build();
 
-            SeasonEntity savedSeason = seasonsRepository.save(newSeason);
-            cashService.create(savedSeason);
-            return savedSeason.getId().toString();
+            return seasonsRepository.save(newSeason);
         } else {
-            return null;
+            throw new SeasonCreationException("This user already has an season at this month");
         }
     }
 
@@ -56,10 +54,8 @@ public class SeasonDefaultService implements SeasonService {
     }
 
     @Override
-    public void deleteAllUserSeasons(UserEntity user) {
-        List<SeasonEntity> seasons = getAllSeasons(user);
-        seasons.forEach(cashService::delete);
-        seasonsRepository.deleteAll(seasons);
+    public void deleteAll(List<SeasonEntity> seasonsToDelete) {
+        seasonsRepository.deleteAll(seasonsToDelete);
     }
 
 
