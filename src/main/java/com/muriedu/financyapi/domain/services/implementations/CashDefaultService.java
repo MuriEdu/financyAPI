@@ -60,7 +60,7 @@ public class CashDefaultService implements CashService {
     public void delete(SeasonEntity season) {
         Optional<CashEntity> cash = cashRepository.findBySeason(season);
         cash.ifPresent(foundCash -> {
-            allocationService.deleteAllByCash(foundCash);
+            //allocationService.deleteAllByCash(foundCash);
             cashRepository.delete(foundCash);
         });
     }
@@ -73,10 +73,10 @@ public class CashDefaultService implements CashService {
     @Override
     public BigDecimal calcCash(SeasonEntity season) {
         CashEntity cash = getBySeason(season);
-        List<AllocationEntity> allocations = allocationService.getAllByCash(cash);
-        allocations.forEach(allocation -> {
-            cash.setCash(cash.getCash().add(allocation.getCrrCash()));
-        });
+//        List<AllocationEntity> allocations = allocationService.getAllByCash(cash);
+//        allocations.forEach(allocation -> {
+//            cash.setCash(cash.getCash().add(allocation.getCrrCash()));
+//        });
         cash.setCash(cash.getCash().add(cash.getNonAllocated()));
         cashRepository.save(cash);
         return cash.getCash();

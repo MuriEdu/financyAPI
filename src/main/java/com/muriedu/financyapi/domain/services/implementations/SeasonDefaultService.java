@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +57,13 @@ public class SeasonDefaultService implements SeasonService {
     @Override
     public void deleteAll(List<SeasonEntity> seasonsToDelete) {
         seasonsRepository.deleteAll(seasonsToDelete);
+    }
+
+    @Override
+    public SeasonEntity getById(UserEntity user, UUID id) {
+        return seasonsRepository.findByUserAndId(user, id).orElseThrow(
+                () -> new DataNotFoundedException("Season not founded")
+        );
     }
 
 

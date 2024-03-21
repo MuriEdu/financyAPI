@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface SeasonService {
@@ -18,6 +19,8 @@ public interface SeasonService {
     public SeasonEntity getSeasonByDate(UserEntity user, SeasonDTO season);
 
     public void deleteAll(List<SeasonEntity> seasonsToDelete);
+
+    public SeasonEntity getById(UserEntity user, UUID id);
 
 
 

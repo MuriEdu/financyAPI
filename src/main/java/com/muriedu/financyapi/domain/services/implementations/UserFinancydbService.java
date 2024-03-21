@@ -85,12 +85,7 @@ public class UserFinancydbService implements UserService {
 
     }
 
-    @Override
-    public String recoverToken(HttpHeaders request) {
-        String header = request.get("Authorization").get(0);
-        if (header == null) return null;
-        if (header.startsWith("Bearer")) return header.replace("Bearer ", "");
-        return null;
-    }
+
+
 
 }

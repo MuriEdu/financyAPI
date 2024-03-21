@@ -2,36 +2,37 @@ package com.muriedu.financyapi.API;
 
 import com.muriedu.financyapi.DTOs.JWTAuthRequestDTO;
 import com.muriedu.financyapi.DTOs.JWTAuthResponseDTO;
-import com.muriedu.financyapi.DTOs.UserRequestDTO;
 import com.muriedu.financyapi.DTOs.UserDTO;
+import com.muriedu.financyapi.DTOs.UserRequestDTO;
 import com.muriedu.financyapi.domain.entities.UserEntity;
-import com.muriedu.financyapi.domain.services.implementations.SeasonDefaultService;
-import com.muriedu.financyapi.domain.services.implementations.UserFinancydbService;
+import com.muriedu.financyapi.domain.services.implementations.ApplicationDefaultService;
 import com.muriedu.financyapi.security.jwt.JwtService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import static org.springframework.http.HttpStatus.*;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/financyapi/users")
 @RequiredArgsConstructor
 public class UsersController {
 
-    private final UserFinancydbService userService;
-    private final SeasonDefaultService seasonService;
+    private final ApplicationDefaultService applicationService;
     private final JwtService jwtService;
+
+    private String recoverToken(HttpHeaders request) {
+        String header = request.get("Authorization").get(0);
+        if (header == null) return null;
+        if (header.startsWith("Bearer")) return header.replace("Bearer ", "");
+        return null;
+    }
 
     @PostMapping
     @ResponseStatus(CREATED)
     public UserDTO create(@RequestBody @Valid UserRequestDTO newUser){
-        UserEntity createdUser = userService.create(newUser);
-        seasonService.create(createdUser);
+        UserEntity createdUser = applicationService.createNewUser(newUser);
         return UserDTO.builder()
                 .name(createdUser.getName())
                 .login(createdUser.getLogin())
@@ -41,21 +42,21 @@ public class UsersController {
     @PostMapping("/auth")
     @ResponseStatus(OK)
     public JWTAuthResponseDTO auth (@RequestBody JWTAuthRequestDTO credentials){
-        return userService.auth(credentials);
+        return applicationService.authUser(credentials);
     }
 
     @DeleteMapping
     @ResponseStatus(NO_CONTENT)
     public void delete(@RequestHeader HttpHeaders headers){
-        String login = jwtService.getUserLogin(userService.recoverToken(headers));
-        userService.delete(login);
+        String login = jwtService.getUserLogin(recoverToken(headers));
+        applicationService.deleteUser(login);
     }
 
     @PatchMapping
     @ResponseStatus(NO_CONTENT)
     public void update(@RequestBody UserDTO user, @RequestHeader HttpHeaders headers){
-        String login = jwtService.getUserLogin(userService.recoverToken(headers));
-        userService.update(user, login);
+        String login = jwtService.getUserLogin(recoverToken(headers));
+        applicationService.updateUser(user, login);
     }
 
 
